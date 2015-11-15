@@ -19,3 +19,5 @@ This is the basic structure of an HMVC module:
      module-name.lc
      index.html
 ```
+
+(Yes, I know for a more complete HMVC implementation there needs to be a bit more added. If we can get the basics going we'll add in other HMVC elements to a Module)
