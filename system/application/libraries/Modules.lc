@@ -30,8 +30,16 @@ rigLogMessage "debug", "HMVC Module Library Loaded"
 local sModule
 
 ##module.php function run(module)
-rigLogMessage "debug", "HMVC modules routine"
+rigLogMessage "debug", "HMVC run() routine"
 
+## returns a Module from a URI if it exsists.
+## Also sets the active module in sModule
+command hmvcFetchModule pURI
+	rigLogMessage "debug", "HMVC Fetch Module->" & pURI
+
+	## HARD CODED MODULE FOR DEVELOPMENT
+	setModule "welcome"
+end hmvcFetchModule
 
 ## LOAD A MODULE CONTROLLER
 function hmvcLoadController pModule
@@ -67,3 +75,15 @@ function hmvcParseRoutes pModule, pURI
 	##module.php parse_routes()
 
 end hmvcParseRoutes
+
+## SET THE ACTIVE MODULE
+command setModule pModule
+	put pModule into sModule
+
+	rigLogMessage "debug", "HMVC setModule->" & sModule
+end setModule
+
+## GET THE ACTIVE MODULE
+function getModule
+	return sModule
+end getModule

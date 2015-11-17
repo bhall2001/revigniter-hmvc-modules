@@ -33,9 +33,6 @@ end if
 
 ## ------------------------------------------------------------------------
 
-
-## ------------------------------------------------------------------------
-
 ##
 # revIgniter HMVC Loader Library
 #
@@ -55,18 +52,17 @@ end if
 
 
 #LOGGING
-rigLogMessage "debug", "APPLICATION Loader Library Loaded"
+rigLogMessage "debug", "HMVC Loader Library Loaded"
 
 # DECLARE VARIABLES
 global gAutoload
 
 local sRiViewPath, sRiHelpers, sRiPlugins, sRiModels, sRiLibs, sRiStacks, sRiLoadedFiles, sRiLoadedStackFiles, sRiDBlibLoaded --, sRiCachedVars
 
-require
 put gAPPPATH & "views/" into sRiViewPath
 
 # Load in Module Logic
-reqiuire gAPPPATH & "libraries/Modules.lc"
+require gAPPPATH & "libraries/Modules.lc"
 
 
 /*----------------------------------------------------------------------

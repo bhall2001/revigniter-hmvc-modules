@@ -56,14 +56,14 @@ end if
 ## ------------------------------------------------------------------------
 
 # LOGGING
-rigLogMessage "debug", "APPLICATION Router Library Loaded"
+rigLogMessage "debug", "HMVC Router Library Loaded"
 
 
 # DECLARE LOCAL VARIABLES
 local sRoutes, sDefaultController, sDirectory, sScaffoldingRequest
 
 # Load in Module Logic
-reqiuire gAPPPATH & "libraries/Modules.lc"
+require gAPPPATH & "libraries/Modules.lc"
 
 
 
@@ -124,6 +124,8 @@ rigLogMessage "debug", "_rigSetRouting"
 			exit _rigSetRouting
 		end if
 
+
+
 	# LOAD THE routes.lc FILE.
 	require gAPPPATH & "config/routes" & gEXT
 	put gRoute into sRoutes
@@ -145,6 +147,8 @@ rigLogMessage "debug", "_rigSetRouting"
 
 rigLogMessage "debug", "tUriString->" & tUriString
 
+## set the active module if it exists from URI string
+hmvcFetchModule tURIString
 
 	# IS THERE A URI STRING? IF NOT, THE DEFAULT CONTROLLER SPECIFIED IN THE "ROUTES" FILE WILL BE SHOWN.
 	if tUriString is "" then
