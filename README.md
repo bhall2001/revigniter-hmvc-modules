@@ -21,7 +21,6 @@ This is the basic structure of an HMVC module:
           /controllers
           /models
           /views
-     module-name.lc
      index.html
 ```
 
