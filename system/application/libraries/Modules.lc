@@ -31,14 +31,30 @@ local sModule
 
 ##module.php function run(module)
 rigLogMessage "debug", "HMVC run() routine"
+put gAPPPATH & "modules/" into tMODPATH
 
 ## returns a Module from a URI if it exsists.
 ## Also sets the active module in sModule
 command hmvcFetchModule pURI
 	rigLogMessage "debug", "HMVC Fetch Module->" & pURI
 
-	## HARD CODED MODULE FOR DEVELOPMENT
-	setModule "welcome"
+	set itemDelimiter to "/"
+	put item 1 of pURI into tModule
+
+	if tModule <> "" then
+		set the defaultFolder to tMODPATH
+			##put the detailed folders into tModuleList
+		put the folders into tModuleList
+		rigLogMessage "debug", "tModuleList->" & tModuleList
+
+		repeat for each line aModule in tModuleList
+			if aModule = tModule then
+				rigLogMessage "debug", "Module Found!"
+				setModule tModule
+				exit repeat
+			end if
+		end repeat
+	end if
 end hmvcFetchModule
 
 ## LOAD A MODULE CONTROLLER

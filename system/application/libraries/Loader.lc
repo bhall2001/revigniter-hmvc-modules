@@ -59,7 +59,7 @@ global gAutoload
 
 local sRiViewPath, sRiHelpers, sRiPlugins, sRiModels, sRiLibs, sRiStacks, sRiLoadedFiles, sRiLoadedStackFiles, sRiDBlibLoaded --, sRiCachedVars
 
-put gAPPPATH & "views/" into sRiViewPath
+put gAPPPATH & "modules/welcome/views/" into sRiViewPath
 
 # Load in Module Logic
 require gAPPPATH & "libraries/Modules.lc"
@@ -306,6 +306,16 @@ function rigLoadView pView pReturn
 		put FALSE into tReturn
 	else
 		put pReturn into tReturn
+	end if
+
+	## Check if Module View exists. If not load standard view
+	rigLogMessage "debug", gAPPPATH & "modules/" & sModule & "/views/" & pView & gEXT
+	if there is a file (gAPPPATH & "modules/" & sModule & "/views/" & pView & gEXT) then
+		rigLogMessage "debug", "rigLoadView: Using HMVC View"
+		put gAPPPATH & "modules/" & sModule & "/views/" into sRiViewPath
+	else
+		rigLogMessage "debug", "rigLoadView: Using Standard View"
+		put gAPPPATH & "views/" into sRiViewPath
 	end if
 
 	put pView into tDataArray["riView"]
