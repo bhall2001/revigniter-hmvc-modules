@@ -28,7 +28,6 @@ This is the basic structure of an HMVC module:
 
 ##Dependencies##
 
-http://revigniter.com
-https://livecode.com/products/livecode-platform/livecode-for-developers/
+[revIgniter Framework](http://revigniter.com)
 
-
+[Learn about Livecode](https://livecode.com/products/livecode-platform/livecode-for-developers/)
