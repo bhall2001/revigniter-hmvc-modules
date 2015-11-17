@@ -1,0 +1,24 @@
+<?lc
+put gBASEPATH into gBASEPATH
+
+if gBASEPATH is "gBASEPATH" then
+	put "No direct script access allowed."
+	exit to top
+end if
+
+##
+# revIgniter Modules Library
+#
+# Functions for addressing HMVC Modules in Revigniter
+#
+# @package		revIgniter
+# @subpackage	Libraries
+# @category	  	Libraries
+# @author		bhall_2001@yahoo.com
+# @license		https://github.com/bhall2001/revigniter-hmvc-modules/blob/master/LICENSE
+# @link		   https://github.com/bhall2001/revigniter-hmvc-modules/blob/master/README.md
+#
+# @created    	2015-Nov-17
+# @modified   	2015-Nov-17
+#
+##
