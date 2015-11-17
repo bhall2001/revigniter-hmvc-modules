@@ -22,3 +22,48 @@ end if
 # @modified   	2015-Nov-17
 #
 ##
+
+## LOGGING
+rigLogMessage "debug", "HMVC Module Library Loaded"
+
+# DECLARE LOCAL VARIABLES
+local sModule
+
+##module.php function run(module)
+rigLogMessage "debug", "HMVC modules routine"
+
+
+## LOAD A MODULE CONTROLLER
+function hmvcLoadController pModule
+	##module.php function load($module)
+
+end hmvcLoadController
+
+## ---------------------------------------
+# SKIPPING PHP AUTOLOAD FUNCTIONS FOR NOW
+#
+# skip function autoload
+#
+## ---------------------------------------
+
+
+## LOAD A MODULE FILE
+function hmvcLoadFile pFilename, pFilepath
+	##module.php function load_file()
+
+end hmvcLoadFile
+
+## FIND A FILE
+## Scans for files located within modules directories.
+## Also scans application directories for models, plugins and views. (FUTURE)
+## Generates fatal error if file not found.
+function findModule pFile, pModule, pBase
+	##module.php function find()
+
+end findModule
+
+## PARSE MODULE ROUTES
+function hmvcParseRoutes pModule, pURI
+	##module.php parse_routes()
+
+end hmvcParseRoutes
