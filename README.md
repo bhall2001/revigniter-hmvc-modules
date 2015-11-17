@@ -1,5 +1,5 @@
 # revigniter-hmvc-modules
-HMVC Modules for revIgniter Framework
+HMVC Modules for the revIgniter Framework
 
 ##NOT READY FOR PRIMETIME##
 This project is in it's inital development state and only contains CODE FRAGMENTS that are not usable at the moment. Once the project gets to a point where you'll be able to do something with it, I'll remove this warning.
@@ -26,7 +26,7 @@ This is the basic structure of an HMVC module:
 
 (Yes, I know for a more complete HMVC implementation there needs to be more added. If we can get the basics going we'll add in other HMVC elements as development progresses)
 
-##Dependencies##
+###Dependencies###
 
 [revIgniter Framework](http://revigniter.com)
 
