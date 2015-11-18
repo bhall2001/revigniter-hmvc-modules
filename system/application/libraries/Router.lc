@@ -91,7 +91,7 @@ require gAPPPATH & "libraries/Modules.lc"
 ----------------------------------------------------------------------*/
 
 command _rigSetRouting
-rigLogMessage "debug", "_rigSetRouting"
+rigLogMessage "debug", "*_rigSetRouting"
 
 
 
@@ -145,7 +145,7 @@ rigLogMessage "debug", "_rigSetRouting"
 --put "username=name&password=pw&passconf=pwc&email=em" into tUriString
 
 
-rigLogMessage "debug", "tUriString->" & tUriString
+rigLogMessage "debug", "*tUriString->" & tUriString
 
 ## set the active module if it exists from URI string
 hmvcFetchModule tURIString
@@ -251,6 +251,7 @@ command _rigSetRequest pSegmentsArray
 	end if
 
 	rigSetController tSegmentsArray[1]
+	##hmvcSetController tSegmentsArray[1]
 
 	if tSegmentsArray[2] <> empty then
 		# A SCAFFOLDING REQUEST. NO FUNNY BUSINESS WITH THE URL
@@ -299,6 +300,8 @@ end _rigSetRequest
 ----------------------------------------------------------------------*/
 
 function _rigValidateRequest pSegmentsArray
+	rigLogMessage "debug", "*_rigValidateRequest->" & pSegmentsArray[1]
+
 	# DOES THE REQUESTED CONTROLLER EXIST IN THE ROOT FOLDER?
 	if there is a file (gAPPPATH & "controllers/" & pSegmentsArray[1] & gEXT) then
 		return pSegmentsArray
@@ -400,6 +403,9 @@ end _rigValidateRequest
 ----------------------------------------------------------------------
 
 command _rigParseRoutes
+
+	rigLogMessage "debug", "*_rigParseRoutes"
+
 	# DO WE EVEN HAVE ANY CUSTOM ROUTING TO DEAL WITH?
 	# THERE IS A DEFAULT  SCAFFOLDING TRIGGER, SO WE'LL LOOK JUST FOR 1
 	if (the number of lines in the keys of sRoutes) = 1 then
@@ -693,9 +699,19 @@ end rigFetchDirectory
 ----------------------------------------------------------------------
 
 function _rigValidateQueryRequest pController pHandler
-	# DOES THE REQUESTED CONTROLLER EXIST IN THE ROOT FOLDER?
-	if there is a file (gAPPPATH & "controllers/" & pController & gEXT) then
+	rigLogMessage "debug", "*_rigValidateQueryRequest->" & pController & "," & pHandler
+	rigLogMessage "debug", "*Controller Path->" & (gAPPPATH & "modules/" & sModule & "/controllers/" & pController & gEXT)
+
+	## DOES AN HMVC CONTROLLER EXIST
+	if there is a file (gAPPPATH & "modules/" & sModule & "/controllers/" & pController & gEXT) then
+		rigLogMessage "debug", "*Using HMVC Controller with->"
 		return TRUE
+
+	# DOES THE REQUESTED CONTROLLER EXIST IN THE ROOT FOLDER?
+	else if there is a file (gAPPPATH & "controllers/" & pController & gEXT) then
+		rigLogMessage "debug", "*Using Standard Controller"
+		return TRUE
+
 	else
 		rigSetController sDefaultController
 		rigSetHandler "index"

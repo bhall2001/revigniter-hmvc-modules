@@ -27,33 +27,24 @@ end if
 rigLogMessage "debug", "HMVC Module Library Loaded"
 
 # DECLARE LOCAL VARIABLES
-local sModule
+local sModule, sMODPATH
 
 ##module.php function run(module)
-rigLogMessage "debug", "HMVC run() routine"
-put gAPPPATH & "modules/" into tMODPATH
+rigLogMessage "debug", "*HMVC run() routine"
+put gAPPPATH & "modules/" into sMODPATH
 
 ## returns a Module from a URI if it exsists.
 ## Also sets the active module in sModule
 command hmvcFetchModule pURI
-	rigLogMessage "debug", "HMVC Fetch Module->" & pURI
+	rigLogMessage "debug", "*HMVC Fetch Module->" & pURI
 
 	set itemDelimiter to "/"
 	put item 1 of pURI into tModule
 
-	if tModule <> "" then
-		set the defaultFolder to tMODPATH
-			##put the detailed folders into tModuleList
-		put the folders into tModuleList
-		rigLogMessage "debug", "tModuleList->" & tModuleList
-
-		repeat for each line aModule in tModuleList
-			if aModule = tModule then
-				rigLogMessage "debug", "Module Found!"
-				setModule tModule
-				exit repeat
-			end if
-		end repeat
+	if there is a folder (sMODPATH & tModule) then
+		rigLogMessage "debug", "*Module Found!"
+		setModule tModule
+		setMODPATH tModule
 	end if
 end hmvcFetchModule
 
@@ -96,10 +87,20 @@ end hmvcParseRoutes
 command setModule pModule
 	put pModule into sModule
 
-	rigLogMessage "debug", "HMVC setModule->" & sModule
+	rigLogMessage "debug", "*HMVC setModule->" & sModule
 end setModule
 
 ## GET THE ACTIVE MODULE
 function getModule
 	return sModule
 end getModule
+
+## SET THE PATH TO THE ACTIVE MODULE
+command setMODPATH pModule
+	put gAPPPATH & "modules/" & pModule & "/" into sMODPATH
+end setMODPATH
+
+## GET THE ACTIVE MODULE pPath
+function getMODPATH
+	return sMODPATH
+end getMODPATH
