@@ -1,8 +1,0 @@
-<div id="login">
-   <p>Please enter your name.</p>
-   <form action="http://revtest.dev/index.lc/chat/" method="post">
-      <label for="name">Name:</label>
-      <input type="text" name="name" id="name" size="20" maxlength="12" placeholder="Name" />
-      <input type="submit" name="loginbtn" value="Login" />
-   </form>
-</div>
