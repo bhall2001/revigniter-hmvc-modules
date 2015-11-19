@@ -1,0 +1,128 @@
+<?lc
+put gBASEPATH into gBASEPATH
+
+if gBASEPATH is "gBASEPATH" then
+	put "No direct script access allowed."
+	exit to top
+end if
+
+##
+# revIgniter Modules Library
+#
+# Functions for addressing HMVC Modules in Revigniter
+#
+# @package		revIgniter
+# @subpackage	Libraries
+# @category	  	Libraries
+# @author		bhall_2001@yahoo.com
+# @license		https://github.com/bhall2001/revigniter-hmvc-modules/blob/master/LICENSE
+# @link		   https://github.com/bhall2001/revigniter-hmvc-modules/blob/master/README.md
+#
+# @created    	2015-Nov-17
+# @modified   	2015-Nov-17
+#
+##
+
+## LOGGING
+rigLogMessage "debug", "HMVC Module Library Loaded"
+
+# DECLARE LOCAL VARIABLES
+local sModule, sMODPATH
+
+##module.php function run(module)
+rigLogMessage "debug", "*HMVC run() routine"
+put gAPPPATH & "modules/" into sMODPATH
+
+## returns a Module from a URI if it exsists.
+## Also sets the active module in sModule
+command hmvcFetchModule pURI
+	rigLogMessage "debug", "*HMVC Fetch Module->" & pURI
+
+	set itemDelimiter to "/"
+	put item 1 of pURI into tModule
+
+	if there is a folder (sMODPATH & tModule) then
+		rigLogMessage "debug", "*Module Found!"
+		setModule tModule
+		setMODPATH tModule
+	end if
+end hmvcFetchModule
+
+## LOAD A MODULE CONTROLLER
+function hmvcLoadController pModule
+	##module.php function load($module)
+
+end hmvcLoadController
+
+## ---------------------------------------
+# SKIPPING PHP AUTOLOAD FUNCTIONS FOR NOW
+#
+# skip function autoload
+#
+## ---------------------------------------
+
+
+## LOAD A MODULE FILE
+function hmvcLoadFile pFilename, pFilepath
+	##module.php function load_file()
+
+end hmvcLoadFile
+
+## FIND A FILE
+## Scans for files located within modules directories.
+## Also scans application directories for models, plugins and views. (FUTURE)
+## Generates fatal error if file not found.
+function findModule pFile, pModule, pBase
+	##module.php function find()
+
+end findModule
+
+## PARSE MODULE ROUTES
+function hmvcParseRoutes pModule, pURI
+	##module.php parse_routes()
+
+end hmvcParseRoutes
+
+function _hmvcValidateRequest pSegmentsArray
+	rigLogMessage "debug", "_hmvcValidateRequest->" & pSegmentsArray[1]
+
+	# DOES THE REQUESTED HMVC DEFAULT CONTROLLER EXIST IN THE MODULE FOLDER?
+	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[1] & gEXT) then
+		rigLogMessage "debug", "*VALID HMVC DEFAULT Controller->" & pSegmentsArray[1]
+		rigSetDirectory ("../modules/" & sModule & "/controllers")
+
+		return true
+	end if
+
+	# DOES THE REQUESTED HMVC CONTROLLER EXIST IN THE MODULE FOLDER?
+	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[2] & gEXT) then
+		rigLogMessage "debug", "*VALID HMVC Controller->" & pSegmentsArray[2]
+		return true
+	end if
+
+	## No Valid HMVC Controller found
+	return false
+end _hmvcValidateRequest
+
+
+## SET THE ACTIVE MODULE
+command setModule pModule
+	put pModule into sModule
+
+	rigLogMessage "debug", "*HMVC setModule->" & sModule
+end setModule
+
+## GET THE ACTIVE MODULE
+function getModule
+	return sModule
+end getModule
+
+## SET THE PATH TO THE ACTIVE MODULE
+command setMODPATH pModule
+	put gAPPPATH & "modules/" & pModule & "/" into sMODPATH
+end setMODPATH
+
+## GET THE ACTIVE MODULE pPath
+function getMODPATH
+	return sMODPATH
+end getMODPATH
