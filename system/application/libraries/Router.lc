@@ -252,6 +252,12 @@ command _rigSetRequest pSegmentsArray
 		exit _rigSetRequest
 	end if
 
+	if getModule() is not empty then
+		put _hmvcLocateController(tSegmentsArray) into tSegmentsArray
+		rigLogMessage "debug", "*_hmvcSetController->" & tSegmentsArray[1] & "," & tSegmentsArray[2]
+
+	end if
+
 	rigSetController tSegmentsArray[1]
 
 	if tSegmentsArray[2] <> empty then
