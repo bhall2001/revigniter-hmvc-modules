@@ -17,7 +17,6 @@ This is the basic structure of an HMVC module:
 ```
 /modules
      /module-name
-          /config
           /controllers
           /models
           /views
