@@ -19,7 +19,7 @@ end if
 # @link		   https://github.com/bhall2001/revigniter-hmvc-modules/blob/master/README.md
 #
 # @created    	2015-Nov-17
-# @modified   	2015-Nov-17
+# @modified   	2015-Nov-19
 #
 ##
 
@@ -84,26 +84,39 @@ function hmvcParseRoutes pModule, pURI
 end hmvcParseRoutes
 
 function _hmvcValidateRequest pSegmentsArray
-	rigLogMessage "debug", "_hmvcValidateRequest->" & pSegmentsArray[1]
+	rigLogMessage "debug", "*_hmvcValidateRequest->" & pSegmentsArray[1] & "|" & pSegmentsArray[2]
 
 	# DOES THE REQUESTED HMVC DEFAULT CONTROLLER EXIST IN THE MODULE FOLDER?
 	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[1] & gEXT) then
 		rigLogMessage "debug", "*VALID HMVC DEFAULT Controller->" & pSegmentsArray[1]
 		rigSetDirectory ("../modules/" & sModule & "/controllers")
-
 		return true
 	end if
 
 	# DOES THE REQUESTED HMVC CONTROLLER EXIST IN THE MODULE FOLDER?
 	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[2] & gEXT) then
 		rigLogMessage "debug", "*VALID HMVC Controller->" & pSegmentsArray[2]
+		rigSetDirectory ("../modules/" & sModule & "/controllers")
 		return true
 	end if
+
+	rigLogMessage "debug", "*NO VALID HMVC Controller FOUND"
 
 	## No Valid HMVC Controller found
 	return false
 end _hmvcValidateRequest
 
+function _hmvcLocateController pSegmentsArray
+
+	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[2] & gEXT) then
+		combine pSegmentsArray using "/"
+		set the itemdelimiter to "/"
+		put item 2 to -1 of pSegmentsArray into pSegmentsArray
+		split pSegmentsArray by "/"
+	end if
+
+	return pSegmentsArray
+end _hmvcLocateController
 
 ## SET THE ACTIVE MODULE
 command setModule pModule
@@ -120,6 +133,7 @@ end getModule
 ## SET THE PATH TO THE ACTIVE MODULE
 command setMODPATH pModule
 	put gAPPPATH & "modules/" & pModule & "/" into sMODPATH
+	rigLogMessage "debug", "*sMODPATH->" & sMODPATH
 end setMODPATH
 
 ## GET THE ACTIVE MODULE pPath
