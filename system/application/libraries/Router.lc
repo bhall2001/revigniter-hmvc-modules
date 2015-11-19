@@ -244,6 +244,8 @@ end rigScaffoldingRequest
 ----------------------------------------------------------------------
 
 command _rigSetRequest pSegmentsArray
+	rigLogMessage "debug", "*_rigSetRequest->" & pSegmentsArray[1] & "," & pSegmentsArray[2]
+
 	put _rigValidateRequest(pSegmentsArray) into tSegmentsArray
 
 	if (the number of lines in the keys of tSegmentsArray) = 0 then
@@ -251,7 +253,6 @@ command _rigSetRequest pSegmentsArray
 	end if
 
 	rigSetController tSegmentsArray[1]
-	##hmvcSetController tSegmentsArray[1]
 
 	if tSegmentsArray[2] <> empty then
 		# A SCAFFOLDING REQUEST. NO FUNNY BUSINESS WITH THE URL
@@ -300,10 +301,18 @@ end _rigSetRequest
 ----------------------------------------------------------------------*/
 
 function _rigValidateRequest pSegmentsArray
-	rigLogMessage "debug", "*_rigValidateRequest->" & pSegmentsArray[1]
+
+
+	rigLogMessage "debug", "*_rigValidateRequest->" & pSegmentsArray[1] & "," & pSegmentsArray[2]
+
+	if _hmvcValidateRequest(pSegmentsArray) then
+		return pSegmentsArray
+	end if
+
 
 	# DOES THE REQUESTED CONTROLLER EXIST IN THE ROOT FOLDER?
 	if there is a file (gAPPPATH & "controllers/" & pSegmentsArray[1] & gEXT) then
+		rigLogMessage "debug", "*VALID Controller->" & pSegmentsArray[1]
 		return pSegmentsArray
 	end if
 
@@ -419,6 +428,11 @@ command _rigParseRoutes
 
 	# IS THERE A LITERAL MATCH?  IF SO WE'RE DONE
 	 put the keys of sRoutes into tRoutesKeys
+
+
+	 rigLogMessage "debug", "*tRoutesKeys->" & tRoutesKeys
+
+
    	sort lines of tRoutesKeys ascending
    	replace return with comma in tRoutesKeys
 
@@ -643,6 +657,8 @@ end rigFetchControllerHandler
 
 command rigSetDirectory pDir
 	put pDir & "/" into sDirectory
+
+	rigLogMessage "debug", "*rigSetDirectory->" & sDirectory
 end rigSetDirectory
 
 
@@ -703,23 +719,32 @@ function _rigValidateQueryRequest pController pHandler
 	rigLogMessage "debug", "*Controller Path->" & (gAPPPATH & "modules/" & sModule & "/controllers/" & pController & gEXT)
 
 	## DOES AN HMVC CONTROLLER EXIST
-	if there is a file (gAPPPATH & "modules/" & sModule & "/controllers/" & pController & gEXT) then
-		rigLogMessage "debug", "*Using HMVC Controller with->"
+	if there is a file (sMODPATH & "controllers/" & pController & gEXT) then
+		rigLogMessage "debug", "*Found HMVC Controller"
 		return TRUE
+	end if
 
 	# DOES THE REQUESTED CONTROLLER EXIST IN THE ROOT FOLDER?
-	else if there is a file (gAPPPATH & "controllers/" & pController & gEXT) then
+	if there is a file (gAPPPATH & "controllers/" & pController & gEXT) then
 		rigLogMessage "debug", "*Using Standard Controller"
 		return TRUE
-
-	else
-		rigSetController sDefaultController
-		rigSetHandler "index"
-		#DOES THE DEFAULT CONTROLLER EXIST IN THE ROOT FOLDER?
-		if there is a file (gAPPPATH & "controllers/" & sDefaultController & gEXT) then
-			return TRUE
-		end if
 	end if
+
+	rigSetController sDefaultController
+	rigSetHandler "index"
+
+	#DOES THE DEFAULT HMVC CONTROLLER EXIST IN THE MODULE folder
+	if there is a file (sMODPATH & "controllers/" & sDefaultController & gEXT) then
+		rigLogMessage "debug", "*Using Default HMVC Controller"
+		return TRUE
+	end if
+
+	#DOES THE DEFAULT CONTROLLER EXIST IN THE ROOT FOLDER?
+	if there is a file (gAPPPATH & "controllers/" & sDefaultController & gEXT) then
+		rigLogMessage "debug", "*Using Default Controller"
+		return TRUE
+	end if
+
 
 	# CAN'T FIND THE REQUESTED CONTROLLER...
 	put pController & "/" & pHandler into tErrMsg

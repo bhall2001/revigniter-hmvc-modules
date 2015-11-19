@@ -83,6 +83,28 @@ function hmvcParseRoutes pModule, pURI
 
 end hmvcParseRoutes
 
+function _hmvcValidateRequest pSegmentsArray
+	rigLogMessage "debug", "_hmvcValidateRequest->" & pSegmentsArray[1]
+
+	# DOES THE REQUESTED HMVC DEFAULT CONTROLLER EXIST IN THE MODULE FOLDER?
+	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[1] & gEXT) then
+		rigLogMessage "debug", "*VALID HMVC DEFAULT Controller->" & pSegmentsArray[1]
+		rigSetDirectory ("../modules/" & sModule & "/controllers")
+
+		return true
+	end if
+
+	# DOES THE REQUESTED HMVC CONTROLLER EXIST IN THE MODULE FOLDER?
+	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[2] & gEXT) then
+		rigLogMessage "debug", "*VALID HMVC Controller->" & pSegmentsArray[2]
+		return true
+	end if
+
+	## No Valid HMVC Controller found
+	return false
+end _hmvcValidateRequest
+
+
 ## SET THE ACTIVE MODULE
 command setModule pModule
 	put pModule into sModule
