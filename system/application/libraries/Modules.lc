@@ -84,7 +84,6 @@ function hmvcParseRoutes pModule, pURI
 end hmvcParseRoutes
 
 function _hmvcValidateRequest pSegmentsArray
-<<<<<<< HEAD
 	rigLogMessage "debug", "*_hmvcValidateRequest->" & pSegmentsArray[1] & "|" & pSegmentsArray[2]
 
 	# DOES THE REQUESTED HMVC DEFAULT CONTROLLER EXIST IN THE MODULE FOLDER?
