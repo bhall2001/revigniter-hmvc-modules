@@ -84,7 +84,7 @@ function hmvcParseRoutes pModule, pURI
 end hmvcParseRoutes
 
 function _hmvcValidateRequest pSegmentsArray
-	rigLogMessage "debug", "_hmvc->" & pSegmentsArray[1]
+	rigLogMessage "debug", "*_hmvcValidateRequest->" & pSegmentsArray[1] & "|" & pSegmentsArray[2]
 
 	# DOES THE REQUESTED HMVC DEFAULT CONTROLLER EXIST IN THE MODULE FOLDER?
 	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[1] & gEXT) then
@@ -99,6 +99,8 @@ function _hmvcValidateRequest pSegmentsArray
 		rigSetDirectory ("../modules/" & sModule & "/controllers")
 		return true
 	end if
+
+	rigLogMessage "debug", "*NO VALID HMVC Controller FOUND"
 
 	## No Valid HMVC Controller found
 	return false
@@ -131,6 +133,7 @@ end getModule
 ## SET THE PATH TO THE ACTIVE MODULE
 command setMODPATH pModule
 	put gAPPPATH & "modules/" & pModule & "/" into sMODPATH
+	rigLogMessage "debug", "*sMODPATH->" & sMODPATH
 end setMODPATH
 
 ## GET THE ACTIVE MODULE pPath
