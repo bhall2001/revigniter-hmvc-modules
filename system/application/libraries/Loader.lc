@@ -62,7 +62,8 @@ local sRiViewPath, sRiHelpers, sRiPlugins, sRiModels, sRiLibs, sRiStacks, sRiLoa
 put gAPPPATH & "views/" into sRiViewPath
 
 # Load in Module Logic
-require gAPPPATH & "libraries/Modules.lc"
+# RDH May not need this...
+# require gAPPPATH & "libraries/Modules.lc"
 
 
 /*----------------------------------------------------------------------
@@ -689,6 +690,9 @@ end rigLoadScaffoldingLanguage
 ----------------------------------------------------------------------
 
 command rigLoadConfig pFile pUseSections pFailGracefully
+	rigLogMessage "debug", "*rigLoadConfig->" & pFile
+
+
 	if pUseSections is empty then
 		put FALSE into tUseSections
 	else
@@ -701,7 +705,8 @@ command rigLoadConfig pFile pUseSections pFailGracefully
 		put pFailGracefully into tFailGracefully
 	end if
 
-	get rigLoadConfigFile(pFile, pUseSections, pFailGracefully)
+	//get rigLoadConfigFile(pFile, pUseSections, pFailGracefully)
+	get hmvcLoadConfigFile(pFile, pUseSections, pFailGracefully)
 end rigLoadConfig
 
 
