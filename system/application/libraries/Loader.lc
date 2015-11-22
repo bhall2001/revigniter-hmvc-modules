@@ -62,7 +62,8 @@ local sRiViewPath, sRiHelpers, sRiPlugins, sRiModels, sRiLibs, sRiStacks, sRiLoa
 put gAPPPATH & "views/" into sRiViewPath
 
 # Load in Module Logic
-require gAPPPATH & "libraries/Modules.lc"
+# RDH May not need this...
+# require gAPPPATH & "libraries/Modules.lc"
 
 
 /*----------------------------------------------------------------------
@@ -138,6 +139,9 @@ end rigLoaderLoadLibrary
 ----------------------------------------------------------------------
 
 command rigLoadModel pModel pDBconn
+	# LOGGING
+	rigLogMessage "debug", "*rigLoadModel->" & pModel & "|" & pDBconn
+
 	if sRiModels is an array then
 		put the number of lines in the keys of sRiModels into tModelsKeyNum
 	else
@@ -199,7 +203,21 @@ command rigLoadModel pModel pDBconn
 		end if
 	end if
 
+	## CHECK IF MODEL LOCATED IN HMVC MODULE
+	put getModule() into tModule
+	rigLogMessage "debug", "*tModule->" & tModule
+	if tModule is not empty then
+		# MODULE HAS BEEN SET, MUST BE IN A MODULE
+		put getMODPATH() into tMODPATH
+			if there is a file (tMODPATH & "models/" & tModel & gEXT) then
+			# MODEL EXISTS IN THE MODULE
+			# ADJUST THE PATH TO THE MODEL ACCORDINGLY
+			put "../modules/" & tModule & "/models/" into tPath
+		end if
+	end if
+
 	put gAPPPATH & "models/" & tPath & tModel & gEXT into tModelToLoad
+	rigLogMessage "debug", "*tModelToLoad-->" & tModelToLoad
 
 	if there is a file tModelToLoad then
 	else
@@ -672,6 +690,9 @@ end rigLoadScaffoldingLanguage
 ----------------------------------------------------------------------
 
 command rigLoadConfig pFile pUseSections pFailGracefully
+	rigLogMessage "debug", "*rigLoadConfig->" & pFile
+
+
 	if pUseSections is empty then
 		put FALSE into tUseSections
 	else
@@ -684,7 +705,8 @@ command rigLoadConfig pFile pUseSections pFailGracefully
 		put pFailGracefully into tFailGracefully
 	end if
 
-	get rigLoadConfigFile(pFile, pUseSections, pFailGracefully)
+	//get rigLoadConfigFile(pFile, pUseSections, pFailGracefully)
+	get hmvcLoadConfigFile(pFile, pUseSections, pFailGracefully)
 end rigLoadConfig
 
 
