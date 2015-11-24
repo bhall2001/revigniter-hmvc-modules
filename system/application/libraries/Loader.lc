@@ -403,6 +403,7 @@ end rigLoadFile
 ----------------------------------------------------------------------
 
 command rigLoadHelper pHelpers
+	rigLogMessage "Debug", "*rigLoadHelper->" & pHelpers
 	put pHelpers into tHelpers
 	if tHelpers is not an array then
 		if comma is in tHelpers then
@@ -430,8 +431,16 @@ command rigLoadHelper pHelpers
 
 		put gAPPPATH & "helpers/" & rigConfigItem("sublibraryPrefix") & tHelper & gEXT into tExtHelper
 
+
+		rigLogMessage "Debug", "*Module Helper Path->" & sMODPATH & "helpers/" & tHelper & gEXT
+
+		## IS THIS A MODULE HELPER
+		if there is a file (sMODPATH & "helpers/" & tHelper & gEXT) then
+			rigLogMessage "Debug", "*Loading Module Helper"
+			require sMODPATH & "helpers/" & tHelper & gEXT
+
 		# IS THIS A HELPER EXTENSION REQUEST?
-		if there is a file tExtHelper then
+		else if there is a file tExtHelper then
 			put gBASEPATH & "helpers/" & tHelper & gEXT into tBaseHelper
 			if there is a file tBaseHelper then
 				require tBaseHelper
@@ -1117,6 +1126,8 @@ end _rigLoadLibrary
 ----------------------------------------------------------------------*/
 
 command _rigAutoloader
+	rigLogMessage "Debug", "*_rigAutoloader"
+
 	require gAPPPATH & "config/autoload" & gEXT
 
 	if gAutoload is not an array then
@@ -1127,7 +1138,10 @@ command _rigAutoloader
 	if the number of lines in the keys of gAutoload["config"] > 0 and gAutoload["config"][1] is not "" then
 		repeat for each key tKey in gAutoload["config"]
 			put gAutoload["config"][tKey] into tConfigToLoad
-			get rigLoadConfigFile(tConfigToLoad)
+			##get rigLoadConfigFile(tConfigToLoad)
+
+			rigLogMessage "Debug", "*Autoload Config->" & tConfigToLoad
+			get hmvcLoadConfigFile(tConfigToLoad)
 		end repeat
 	end if
 

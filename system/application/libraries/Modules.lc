@@ -76,6 +76,8 @@ end hmvcLoadController
 ----------------------------------------------------------------------*/
 
 function hmvcLoadConfigFile pConfigFile pUseSections pFailGracefully
+	rigLogMessage "debug", "*hmvcLoadConfigFile->" & pConfigFile
+
 	if sConfigIsLoaded is an array then
 		put the number of lines in the keys of sConfigIsLoaded into tConfigIsLoadedKeyNum
 	else
@@ -96,17 +98,15 @@ function hmvcLoadConfigFile pConfigFile pUseSections pFailGracefully
 	end if
 
 	## CHECK IF THE CONFIG FILE IS ALREADY LOADED
-	if sMdoule is not empty then
-		if _IsInConfigArray(sConfigIsLoaded, tConfigFileName, (sModule & "_") ) then
-			return TRUE
-		end if
-	end if
-
-	if _IsInConfigArray(sConfigIsLoaded, tConfigFileName, "" ) then
+	##if _IsInConfigArray(sConfigIsLoaded, tConfigFileName, (sModule & "_") ) then
+	if _IsInConfigArray(sConfigIsLoaded, tConfigFileName) then
 		return TRUE
 	end if
 
-
+/*
+ * REMOVED by RDH 2015-nov-21
+ * Replaced with code above.
+ *
 	put FALSE into tIsInConfigArray
 	repeat for each element thisElement in sConfigIsLoaded
 		if thisElement is tConfigFileName then
@@ -117,10 +117,13 @@ function hmvcLoadConfigFile pConfigFile pUseSections pFailGracefully
 	 if tIsInConfigArray is TRUE then
 		return TRUE
 	end if
+*/
+
 
 	# CHECK IF FILE EXISTS
 	put gAPPPATH & "config/" & tConfigFileName & gEXT into tFilepath
-	if there is a file tFilepath then
+	put sMODPATH & "config/" & tConfigFileName & gEXT into tModFilepath
+	if (there is a file tFilepath) or (there is a file tModFilePath) then
 	else
 		if pFailGracefully is TRUE then
 			return FALSE
@@ -132,7 +135,15 @@ function hmvcLoadConfigFile pConfigFile pUseSections pFailGracefully
 	if pUseSections is not TRUE then -- gConfig ARRAY IS USED FOR CONFIGURATION DATA
 		# CHECK IF NEW CONFIGURATION FILE CONTAINS VALID CONFIGURATION DATA
 		put the number of lines in the keys of gConfig into tCurrentConfigItemNum
-		require tFilepath
+		if there is a file tFilePath then
+		   rigLogMessage "Debug", "*Loading Config File"
+			require tFilepath
+		end if
+
+		if there is a file tModFilePath then
+			rigLogMessage "Debug", "*Loading Module File"
+		require tModFilePath
+		end if
 		put the number of lines in the keys of gConfig into tNewConfigItemNum
 
 		if tNewConfigItemNum = tCurrentConfigItemNum then
@@ -145,7 +156,13 @@ function hmvcLoadConfigFile pConfigFile pUseSections pFailGracefully
 
 	else -- ARRAY IS USED TO AVOID NAME COLLISIONS
 		# CHECK IF NEW CONFIGURATION FILE CONTAINS VALID CONFIGURATION DATA
-		require tFilepath
+		if there is a file tFilePath then
+			require tFilepath
+		end if
+		if there is a file tModFilePath then
+			require tModFilePath
+		end if
+
 		put gConfig[tConfigFileName] into tSectionArray
 
 		if tSectionArray is not an array then
@@ -165,11 +182,20 @@ function hmvcLoadConfigFile pConfigFile pUseSections pFailGracefully
 
 end hmvcLoadConfigFile
 
-function _IsInConfigArray pConfigIsLoaded pConfigFileName pPrefix
+## Checks if the Config file is loaded
+#
+##function _IsInConfigArray pConfigIsLoaded pConfigFileName pPrefix
+function _IsInConfigArray pConfigIsLoaded pConfigFileName
 	repeat for each element thisElement in pConfigIsLoaded
-		if thisElement is (pPrefix & pConfigFileName) then
+		if thisElement is pConfigFileName then
 			return true
-			exit repeat
+			exit _IsInConfigArray
+		## Next check if module config
+		/*else if pPrefix is not "_" then
+			if thisElement is (pPrefix & pConfigFileName) then
+				return true
+				exit repeat
+			end if*/
 		end if
 	end repeat
  	return FALSE
