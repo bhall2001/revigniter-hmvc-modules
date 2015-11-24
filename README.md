@@ -1,6 +1,8 @@
 # revigniter-hmvc-modules
 HMVC Modules for the revIgniter Framework
 
+[HMVC revIgniter Wiki](https://github.com/bhall2001/revigniter-hmvc-modules/wiki)
+
 ##GIVE IT A TRY##
 This project is in it's initial development state and contains VERY NEW/UNTESTED code. I am so excited by the possibilities I've pushed out my initial work with LIMITED TESTING. Please, start small and take baby steps. I suggest starting by looking at the original welcome screen (/index.lc) vs. the HMVC welcome screen (index.lc/welcome).
 
@@ -27,8 +29,15 @@ This is the basic structure of an HMVC module:
 ```
 /modules
      /module-name
+          /config (harder than I thought... probably going to be last to implement)
           /controllers
+          /helpers
+          /hooks (tbd)
+          /language (coming soon...)
+          /libraries (coming soon...)
           /models
+          /plugins (coming soon...)
+          /stacks (coming soon...)
           /views
      index.html
 ```
