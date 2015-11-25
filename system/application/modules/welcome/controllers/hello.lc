@@ -1,7 +1,7 @@
 <?rev
 
 # PUT YOUR HANDLER NAMES  INTO THE GLOBAL gControllerHandlers AS A COMMA SEPARATED LIST
-put "welcome,index,dude" into gControllerHandlers
+put "welcome,index,page" into gControllerHandlers
 
 
 
@@ -19,7 +19,7 @@ end welcome
 command index
 	# REMEMBER TO PUT ALL THE VARIABLES TO BE MERGED WITH VIEWS INTO THE ARRAY VARIABLE gData
 	# SET PAGE TITLE
-	put "Welcome to HMVC revIgniter" into gData["pageTitle"]
+	put "***HELLO*** Welcome to revIgniter" into gData["pageTitle"]
 
 	put RIVERSION && RISTATE into gData["revIgniterVersion"]
 	put the version into gData["serverVersion"]
@@ -28,6 +28,18 @@ command index
 	get rigLoadView("welcomeMessage")
 end index
 
+# THIS COMMAND WILL BE CALLED IF NONE IS SPECIFYED IN THE URI
+command page
+	# REMEMBER TO PUT ALL THE VARIABLES TO BE MERGED WITH VIEWS INTO THE ARRAY VARIABLE gData
+	# SET PAGE TITLE
+	put "****PAGE**** Welcome to revIgniter" into gData["pageTitle"]
+
+	put RIVERSION && RISTATE into gData["revIgniterVersion"]
+	put the version into gData["serverVersion"]
+
+	# LOAD THE VIEW FILE
+	get rigLoadView("welcomeMessage")
+end page
 
 
 

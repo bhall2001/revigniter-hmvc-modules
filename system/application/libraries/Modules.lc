@@ -19,7 +19,7 @@ end if
 # @link		   https://github.com/bhall2001/revigniter-hmvc-modules/blob/master/README.md
 #
 # @created    	2015-Nov-17
-# @modified   	2015-Nov-17
+# @modified   	2015-Nov-19
 #
 ##
 
@@ -38,13 +38,15 @@ put gAPPPATH & "modules/" into sMODPATH
 command hmvcFetchModule pURI
 	rigLogMessage "debug", "*HMVC Fetch Module->" & pURI
 
-	set itemDelimiter to "/"
-	put item 1 of pURI into tModule
+	if pURI is not empty then
+		set itemDelimiter to "/"
+		put item 1 of pURI into tModule
 
-	if there is a folder (sMODPATH & tModule) then
-		rigLogMessage "debug", "*Module Found!"
-		setModule tModule
-		setMODPATH tModule
+		if there is a folder (sMODPATH & tModule) then
+			rigLogMessage "debug", "*Module Found!"
+			setModule tModule
+			setMODPATH tModule
+		end if
 	end if
 end hmvcFetchModule
 
@@ -53,6 +55,152 @@ function hmvcLoadController pModule
 	##module.php function load($module)
 
 end hmvcLoadController
+
+
+/*----------------------------------------------------------------------
+--| FUNCTION rigLoadConfigFile
+--|
+--| Author: rabit
+--| Version:  1.3
+--| Created: 30-06-09
+--| Last Mod: 17-09-15
+--| Requires: rigShowError, rigLogMessage, rigIsMainConfigLoaded()
+--|
+--| Summary: Loads any configuration file.
+--|
+--| Format:  rigLoadConfigFile(param1, param2, param3, param4)
+--|
+--| Parameters: string <pConfigFile>, bool <pUseSections>, bool <pFailGracefully>
+--|
+--| Return: bool
+----------------------------------------------------------------------*/
+
+function hmvcLoadConfigFile pConfigFile pUseSections pFailGracefully
+	rigLogMessage "debug", "*hmvcLoadConfigFile->" & pConfigFile
+
+	if sConfigIsLoaded is an array then
+		put the number of lines in the keys of sConfigIsLoaded into tConfigIsLoadedKeyNum
+	else
+		put 0 into tConfigIsLoadedKeyNum
+	end if
+
+	if pConfigFile is empty then
+		put "config" into tConfigFileName
+
+		if rigIsMainConfigLoaded() is TRUE then
+			add 1 to tConfigIsLoadedKeyNum
+			put "config" into sConfigIsLoaded[tConfigIsLoadedKeyNum]
+		end if
+	else
+		# REMOVE SUFFIX
+		put pConfigFile into tConfigFileName
+		replace gEXT with "" in tConfigFileName
+	end if
+
+	## CHECK IF THE CONFIG FILE IS ALREADY LOADED
+	##if _IsInConfigArray(sConfigIsLoaded, tConfigFileName, (sModule & "_") ) then
+	if _IsInConfigArray(sConfigIsLoaded, tConfigFileName) then
+		return TRUE
+	end if
+
+/*
+ * REMOVED by RDH 2015-nov-21
+ * Replaced with code above.
+ *
+	put FALSE into tIsInConfigArray
+	repeat for each element thisElement in sConfigIsLoaded
+		if thisElement is tConfigFileName then
+			put TRUE into tIsInConfigArray
+			exit repeat
+		end if
+	end repeat
+	 if tIsInConfigArray is TRUE then
+		return TRUE
+	end if
+*/
+
+
+	# CHECK IF FILE EXISTS
+	put gAPPPATH & "config/" & tConfigFileName & gEXT into tFilepath
+	put sMODPATH & "config/" & tConfigFileName & gEXT into tModFilepath
+	if (there is a file tFilepath) or (there is a file tModFilePath) then
+	else
+		if pFailGracefully is TRUE then
+			return FALSE
+		else
+			rigShowError "The configuration file" && tConfigFileName & gEXT && "does not exist."
+		end if
+	end if
+
+	if pUseSections is not TRUE then -- gConfig ARRAY IS USED FOR CONFIGURATION DATA
+		# CHECK IF NEW CONFIGURATION FILE CONTAINS VALID CONFIGURATION DATA
+		put the number of lines in the keys of gConfig into tCurrentConfigItemNum
+		if there is a file tFilePath then
+		   rigLogMessage "Debug", "*Loading Config File"
+			require tFilepath
+		end if
+
+		if there is a file tModFilePath then
+			rigLogMessage "Debug", "*Loading Module File"
+		require tModFilePath
+		end if
+		put the number of lines in the keys of gConfig into tNewConfigItemNum
+
+		if tNewConfigItemNum = tCurrentConfigItemNum then
+			if pFailGracefully is TRUE then
+				return FALSE
+			else
+				rigShowError "Your" && tConfigFileName & gEXT && "file does not appear to contain a valid configuration array."
+			end if
+		end if
+
+	else -- ARRAY IS USED TO AVOID NAME COLLISIONS
+		# CHECK IF NEW CONFIGURATION FILE CONTAINS VALID CONFIGURATION DATA
+		if there is a file tFilePath then
+			require tFilepath
+		end if
+		if there is a file tModFilePath then
+			require tModFilePath
+		end if
+
+		put gConfig[tConfigFileName] into tSectionArray
+
+		if tSectionArray is not an array then
+			if pFailGracefully is TRUE then
+				return FALSE
+			else
+				rigShowError "Your" && tConfigFileName & gEXT && "file does not appear to contain a valid configuration array."
+			end if
+		end if
+	end if
+
+	add 1 to tConfigIsLoadedKeyNum
+	put pConfigFile into sConfigIsLoaded[tConfigIsLoadedKeyNum]
+
+	rigLogMessage "debug", "Config file loaded: config/" & pConfigFile & gEXT
+	return TRUE
+
+end hmvcLoadConfigFile
+
+## Checks if the Config file is loaded
+#
+##function _IsInConfigArray pConfigIsLoaded pConfigFileName pPrefix
+function _IsInConfigArray pConfigIsLoaded pConfigFileName
+	repeat for each element thisElement in pConfigIsLoaded
+		if thisElement is pConfigFileName then
+			return true
+			exit _IsInConfigArray
+		## Next check if module config
+		/*else if pPrefix is not "_" then
+			if thisElement is (pPrefix & pConfigFileName) then
+				return true
+				exit repeat
+			end if*/
+		end if
+	end repeat
+ 	return FALSE
+end _IsInConfigArray
+
 
 ## ---------------------------------------
 # SKIPPING PHP AUTOLOAD FUNCTIONS FOR NOW
@@ -84,26 +232,39 @@ function hmvcParseRoutes pModule, pURI
 end hmvcParseRoutes
 
 function _hmvcValidateRequest pSegmentsArray
-	rigLogMessage "debug", "_hmvcValidateRequest->" & pSegmentsArray[1]
+	rigLogMessage "debug", "*_hmvcValidateRequest->" & pSegmentsArray[1] & "|" & pSegmentsArray[2]
 
 	# DOES THE REQUESTED HMVC DEFAULT CONTROLLER EXIST IN THE MODULE FOLDER?
 	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[1] & gEXT) then
 		rigLogMessage "debug", "*VALID HMVC DEFAULT Controller->" & pSegmentsArray[1]
 		rigSetDirectory ("../modules/" & sModule & "/controllers")
-
 		return true
 	end if
 
 	# DOES THE REQUESTED HMVC CONTROLLER EXIST IN THE MODULE FOLDER?
 	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[2] & gEXT) then
 		rigLogMessage "debug", "*VALID HMVC Controller->" & pSegmentsArray[2]
+		rigSetDirectory ("../modules/" & sModule & "/controllers")
 		return true
 	end if
+
+	rigLogMessage "debug", "*NO VALID HMVC Controller FOUND"
 
 	## No Valid HMVC Controller found
 	return false
 end _hmvcValidateRequest
 
+function _hmvcLocateController pSegmentsArray
+
+	if there is a file (sMODPATH & "controllers/" & pSegmentsArray[2] & gEXT) then
+		combine pSegmentsArray using "/"
+		set the itemdelimiter to "/"
+		put item 2 to -1 of pSegmentsArray into pSegmentsArray
+		split pSegmentsArray by "/"
+	end if
+
+	return pSegmentsArray
+end _hmvcLocateController
 
 ## SET THE ACTIVE MODULE
 command setModule pModule
@@ -120,6 +281,7 @@ end getModule
 ## SET THE PATH TO THE ACTIVE MODULE
 command setMODPATH pModule
 	put gAPPPATH & "modules/" & pModule & "/" into sMODPATH
+	rigLogMessage "debug", "*sMODPATH->" & sMODPATH
 end setMODPATH
 
 ## GET THE ACTIVE MODULE pPath
