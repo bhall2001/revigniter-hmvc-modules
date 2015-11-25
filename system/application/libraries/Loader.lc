@@ -1046,8 +1046,9 @@ command _rigLoadLibrary pLibrary pParams
 
 		# LETS SEARCH FOR THE REQUESTED LIBRARY FILE AND LOAD IT.
 		put FALSE into tIsDuplicate
-		put gAPPPATH into tPathVariants[1]
-		put gBASEPATH into tPathVariants[2]
+		put sMODPATH into tPathVariants[1]
+		put gAPPPATH into tPathVariants[2]
+		put gBASEPATH into tPathVariants[3]
 
 		repeat for each key tKey in tPathVariants
 			put tPathVariants[tKey] into tPathVar
